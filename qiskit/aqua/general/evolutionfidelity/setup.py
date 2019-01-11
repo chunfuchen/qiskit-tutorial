@@ -5,44 +5,13 @@
 # =============================================================================
 
 import setuptools
-from setuptools.command.install import install
-from setuptools.command.develop import develop
-from setuptools.command.egg_info import egg_info
-import atexit
 
 long_description = """An example to install a pluggable algorithm/component."""
 
 requirements = [
-    "qiskit-aqua>=0.4.0",
-    "qiskit-terra>=0.7,<0.8",
+    "qiskit-aqua>=0.4.1",
     "numpy>=1.13"
 ]
-
-
-def _post_install():
-    from qiskit_aqua_cmd.preferences import Preferences
-    preferences = Preferences()
-    preferences.add_package('evolutionfidelity')
-    preferences.save()
-
-
-class CustomInstallCommand(install):
-    def run(self):
-        atexit.register(_post_install)
-        install.run(self)
-
-
-class CustomDevelopCommand(develop):
-    def run(self):
-        atexit.register(_post_install)
-        develop.run(self)
-
-
-class CustomEggInfoCommand(egg_info):
-    def run(self):
-        atexit.register(_post_install)
-        egg_info.run(self)
-
 
 setuptools.setup(
     name='evolutionfidelity',
@@ -70,9 +39,9 @@ setuptools.setup(
     install_requires=requirements,
     include_package_data=True,
     python_requires=">=3.5",
-    cmdclass={
-        'install': CustomInstallCommand,
-        'develop': CustomDevelopCommand,
-        'egg_info': CustomEggInfoCommand
+    entry_points={
+        'qiskit.aqua.pluggables': [
+            'EvolutionFidelity = evolutionfidelity:EvolutionFidelity'
+        ],
     }
 )
